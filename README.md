@@ -1,7 +1,7 @@
 clean_gwas \
 自用自用自用 \
 创建环境 \
-wget https://github.com/Locco2011/clean_gwas \
+git clone https://github.com/Locco2011/clean_gwas.git \
 cd clean_gwas \
 conda env create -f environment.yml \
 conda activate clean \
