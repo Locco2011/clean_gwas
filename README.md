@@ -7,7 +7,7 @@
 #conda activate clean \
 #Python 3.10 \
 #Linux Ubuntu 20.04.6 LTS \
-#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N'
+#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' \
 ======用法=====
 #sudo chmod +x *.sh \
 #清洗芬兰R12(下载之后放入当前目录，./finn_clean.sh)，标准列名+补充样本(根据目录下的finnGen_R12.xlsx中num_cases+num_controls=N) \
