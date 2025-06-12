@@ -1,3 +1,4 @@
+=================================================================================
 #clean_gwas \
 #自用 \
 #创建环境 \
@@ -12,7 +13,7 @@
 #清洗其他，请修改format_sumstats.sh \
 #查看数据，请修改format_sumstats.sh \
 #Python 3.10 \
-#Linux Ubuntu20.04.6 LTS \
+#Linux Ubuntu 20.04.6 LTS \
 #标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' 
 ===================================================================================
 #SE = sqrt(((BETA)^2)/qchisq(P,1,lower.tail=F)) \
@@ -26,3 +27,4 @@
 #Log(lower bound of OR) = lower bound of BETA \
 #upper bound of BETA = BETA + SE*(BETA) x 1.96 \
 #lower bound of BETA = BETA - SE*(BETA) x 1.96 
+====================================================================================
