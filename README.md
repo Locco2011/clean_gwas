@@ -9,8 +9,8 @@ Python 3.10 \
 Linux Ubuntu 20.04.6 LTS \
 标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' \
 =============================更新===================================== \
-cd clean_gwas
-git pull
+cd clean_gwas \
+git pull \
 =============================用法===================================== \
 sudo chmod +x *.sh \
 清洗芬兰R12(确保当前目录下只有芬兰数据)(下载之后放入当前目录，./finn_clean.sh)，标准列名+补充样本(根据目录下的finnGen_R12.xlsx中num_cases+num_controls=N) \
