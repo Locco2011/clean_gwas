@@ -1,4 +1,4 @@
-clean_gwas \
+#clean_gwas# \
 #自用 \
 #创建环境 \
 #wget https://github.com/Locco2011/clean_gwas \
