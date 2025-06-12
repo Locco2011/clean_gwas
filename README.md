@@ -21,4 +21,4 @@
 #Log(upper bound of OR) = upper bound of BETA \
 #Log(lower bound of OR) = lower bound of BETA \
 #upper bound of BETA = BETA + SE*(BETA) x 1.96 \
-#lower bound of BETA = BETA - SE*(BETA) x 1.96 \
+#lower bound of BETA = BETA - SE*(BETA) x 1.96 
