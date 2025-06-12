@@ -16,6 +16,6 @@ sudo chmod +x *.sh \
 查看数据结构，请修改format_sumstats_preview.sh \
 h38转为h37：./38to37.sh *.txt（此txt已根据上述清洗处理，仅列名重置） \
 h37转为h38：./37to38.sh *.txt（此txt已根据上述清洗处理，仅列名重置） \
-批量h37转为h38：37to38cycle.sh /xx/xx/xx(后缀为.txt的标准列名gwas所在文件夹) \
-批量h38转为h37：38to37cycle.sh /xx/xx/xx(后缀为.txt的标准列名gwas所在文件夹) 
+批量h37转为h38：./37to38cycle.sh /xx/xx/xx(后缀为.txt的标准列名gwas所在文件夹) \
+批量h38转为h37：./38to37cycle.sh /xx/xx/xx(后缀为.txt的标准列名gwas所在文件夹) 
 
