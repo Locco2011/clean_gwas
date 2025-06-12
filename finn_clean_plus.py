@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-#过滤P值，移除那些不在 (0, 1] 区间内的无效P值#
-#过滤等位基因，只保留那些非链模糊（strand-unambiguous）的SNP#
-#确保等位基因的一致性#
+# 这是一个顺序处理 + 片段化处理的版本。
+# 它会一个接一个地处理文件，并且对每个文件内部进行分块读取，以节省内存。
+
 import os
 import glob
 import pandas as pd
-import multiprocessing
 from tqdm import tqdm
-from functools import partial
 import numpy as np
 
-# --- 1. 请在这里配置您的路径 ---
+# --- 1. 请在这里配置您的路径和参数 ---
+# (可选) 等位基因参考文件路径，如果不需要则设为 None
 MERGE_ALLELES_FILE_PATH = './w_hm3.snplist'
+# 设置每个片段的大小（行数）。可根据您的内存大小调整。
+CHUNK_SIZE = 500000 
 
-# --- 工作者函数：处理单个文件的所有逻辑 ---
+# --- 工作者函数：处理单个文件的所有逻辑 (已修改为片段化处理) ---
 def process_single_file(gz_file_path, metadata_df, column_rename_map, final_columns, merge_alleles_df):
-    """这个函数包含了处理单个.gz文件的所有步骤，并新增了多个过滤逻辑。"""
+    """这个函数现在使用片段化处理来高效处理单个大文件。"""
     try:
         filename = os.path.basename(gz_file_path)
         
-        # --- 步骤 A: 读取和初步准备 ---
+        # --- 步骤 A: 准备工作 ---
         phenocode = filename.replace('finngen_R12_', '').replace('.gz', '')
         try:
             row = metadata_df.loc[phenocode]
@@ -27,49 +28,67 @@ def process_single_file(gz_file_path, metadata_df, column_rename_map, final_colu
         except KeyError:
             return f"警告: 在 Excel 文件中找不到 Phenocode '{phenocode}'，跳过文件 {filename}"
 
-        gwas_df = pd.read_csv(
+        processed_chunks = []
+        initial_rows = 0
+
+        # --- 步骤 B: 创建迭代器并分块处理 ---
+        reader = pd.read_csv(
             gz_file_path, compression='gzip', sep='\t',
-            dtype={'#chrom': str, 'rsids': str, 'pval': str}
+            dtype={'#chrom': str, 'rsids': str, 'pval': str},
+            chunksize=CHUNK_SIZE
         )
-        initial_rows = len(gwas_df)
 
-        # --- 步骤 B: 列重命名与类型转换 ---
-        gwas_df.rename(columns=column_rename_map, inplace=True)
-        gwas_df['P'] = pd.to_numeric(gwas_df['P'], errors='coerce')
-        gwas_df.dropna(subset=['P'], inplace=True)
+        for gwas_chunk in reader:
+            initial_rows += len(gwas_chunk)
+            
+            # --- 对每个块应用所有过滤逻辑 ---
 
-        # --- 步骤 C: P值有效性过滤 (filter_pvals) ---
-        p_filter_mask = (gwas_df['P'] > 0) & (gwas_df['P'] <= 1)
-        gwas_df = gwas_df[p_filter_mask].copy()
+            # 1. 列重命名与类型转换
+            gwas_chunk.rename(columns=column_rename_map, inplace=True)
+            gwas_chunk['P'] = pd.to_numeric(gwas_chunk['P'], errors='coerce')
+            gwas_chunk.dropna(subset=['P'], inplace=True)
 
-        # --- 步骤 D: (可选) 等位基因合并与校验 (allele_merge) ---
-        if merge_alleles_df is not None:
-            merged_df = pd.merge(gwas_df, merge_alleles_df, on='SNP', how='inner', suffixes=('', '_ref'))
-            allele_match_mask = merged_df.apply(
-                lambda row: {row['A1'], row['A2']} == {row['A1_ref'], row['A2_ref']},
-                axis=1
-            )
-            gwas_df = merged_df[allele_match_mask].copy()
-            gwas_df.drop(columns=['A1_ref', 'A2_ref'], inplace=True)
+            # 2. P值有效性过滤
+            p_filter_mask = (gwas_chunk['P'] > 0) & (gwas_chunk['P'] <= 1)
+            gwas_chunk = gwas_chunk[p_filter_mask].copy()
 
-        # --- 步骤 E: 链模糊SNP过滤 (filter_alleles) ---
-        ambiguous_sets = [{'A', 'T'}, {'C', 'G'}]
-        allele_sets = gwas_df.apply(lambda row: {str(row['A1']).upper(), str(row['A2']).upper()}, axis=1)
-        non_ambiguous_mask = allele_sets.apply(lambda s: s not in ambiguous_sets)
-        gwas_df = gwas_df[non_ambiguous_mask].copy()
+            # 3. (可选) 等位基因合并与校验
+            if merge_alleles_df is not None:
+                merged_chunk = pd.merge(gwas_chunk, merge_alleles_df, on='SNP', how='inner', suffixes=('', '_ref'))
+                if not merged_chunk.empty:
+                    allele_match_mask = merged_chunk.apply(
+                        lambda r: {r['A1'], r['A2']} == {r['A1_ref'], r['A2_ref']},
+                        axis=1
+                    )
+                    gwas_chunk = merged_chunk[allele_match_mask].copy()
+                    gwas_chunk.drop(columns=['A1_ref', 'A2_ref'], inplace=True)
+                else:
+                    gwas_chunk = pd.DataFrame(columns=gwas_chunk.columns) #
+            
+            # 4. 链模糊SNP过滤
+            if not gwas_chunk.empty:
+                ambiguous_sets = [{'A', 'T'}, {'C', 'G'}]
+                allele_sets = gwas_chunk.apply(lambda r: {str(r['A1']).upper(), str(r['A2']).upper()}, axis=1)
+                non_ambiguous_mask = allele_sets.apply(lambda s: s not in ambiguous_sets)
+                gwas_chunk = gwas_chunk[non_ambiguous_mask].copy()
+
+            # 如果块经过滤后仍有数据，则添加到列表中
+            if not gwas_chunk.empty:
+                processed_chunks.append(gwas_chunk)
+
+        # --- 步骤 C: 合并所有处理过的片段 ---
+        if not processed_chunks:
+            return f"警告: 经过滤后，文件 {filename} 无剩余数据，已跳过。"
         
-        # ✨ FIX: Corrected typo from ggwas_df to gwas_df
+        gwas_df = pd.concat(processed_chunks, ignore_index=True)
         rows_after_all_filters = len(gwas_df)
-        
-        # --- 步骤 F: 添加N列并筛选最终列 ---
+
+        # --- 步骤 D: 添加N列并筛选最终列 ---
         gwas_df['N'] = n_value
         existing_columns_to_keep = [col for col in final_columns if col in gwas_df.columns]
         gwas_df_filtered = gwas_df[existing_columns_to_keep]
 
-        # --- 步骤 G: 保存文件 ---
-        if gwas_df_filtered.empty:
-            return f"警告: 经过滤后，文件 {filename} 无剩余数据，已跳过。"
-            
+        # --- 步骤 E: 保存文件 ---
         output_filename = f"{phenocode}.txt"
         gwas_df_filtered.to_csv(output_filename, sep='\t', index=False, na_rep='NA')
         
@@ -77,10 +96,11 @@ def process_single_file(gz_file_path, metadata_df, column_rename_map, final_colu
     except Exception as e:
         return f"错误: 处理文件 {gz_file_path} 时失败: {e}"
 
-# --- 主函数：负责管理和调度 ---
+# --- 主函数：负责管理和调度 (此函数无需修改) ---
 def main():
     """主函数，负责管理所有任务"""
-    print("--- 脚本启动 ---")
+    print("--- 脚本启动 (顺序处理 + 片段化读取模式) ---")
+    print(f"每个文件将被分成 {CHUNK_SIZE} 行的片段进行处理。")
     
     excel_file_path = 'finnGen_R12.xlsx'
     merge_alleles_df = None
@@ -113,24 +133,20 @@ def main():
         print("⚠️ 警告: 在当前文件夹中未找到任何 'finngen_R12_*.gz' 文件。")
         return
     
-    total_cores = os.cpu_count()
-    num_processes = max(1, total_cores // 2)
-    print(f"系统总核心数: {total_cores}。将使用 {num_processes} 个核心进行处理。")
     print(f"共找到 {len(gz_files)} 个文件待处理。")
 
-    worker_func_with_args = partial(
-        process_single_file,
-        metadata_df=metadata_df,
-        column_rename_map=column_rename_map,
-        final_columns=final_columns,
-        merge_alleles_df=merge_alleles_df
-    )
+    print("\n--- 开始顺序处理，请稍候 ---")
+    results = []
+    for gz_file in tqdm(gz_files, desc="处理文件"):
+        result = process_single_file(
+            gz_file,
+            metadata_df=metadata_df,
+            column_rename_map=column_rename_map,
+            final_columns=final_columns,
+            merge_alleles_df=merge_alleles_df
+        )
+        results.append(result)
 
-    print("\n--- 开始并行处理，请稍候 ---")
-    with multiprocessing.Pool(processes=num_processes) as pool:
-        results = list(tqdm(pool.imap_unordered(worker_func_with_args, gz_files), total=len(gz_files), desc="处理文件"))
-
-    # ✨ NEW: Improved summary logging to show details
     print("\n--- 所有任务处理完毕 ---")
     successes = [r for r in results if r.startswith("成功")]
     warnings = [r for r in results if r.startswith("警告")]
@@ -140,11 +156,11 @@ def main():
     if warnings:
         print(f"⚠️ 警告 (已跳过): {len(warnings)} 个文件")
         for w in warnings:
-            print(f"  - {w}") # Print detailed warning
+            print(f"   - {w}")
     if errors:
         print(f"❌ 错误 (处理失败): {len(errors)} 个文件")
         for e in errors:
-            print(f"  - {e}") # Print detailed error
+            print(f"   - {e}")
 
 if __name__ == '__main__':
     main()
