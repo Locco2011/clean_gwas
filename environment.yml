@@ -40,4 +40,3 @@ dependencies:
       - six==1.17.0
       - tqdm==4.67.1
       - tzdata==2025.2
-prefix: /home/cgl/miniconda3/envs/clean
