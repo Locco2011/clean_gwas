@@ -9,4 +9,4 @@
 #查看数据，请修改format_sumstats.sh \
 #python 3.10 \
 #Linux Ubuntu20.04.6 LTS \
-#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' \
+#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' 
