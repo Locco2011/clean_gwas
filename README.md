@@ -1,6 +1,8 @@
 #clean_gwas \
 #自用 \
 #创建环境 \
+#wget https://github.com/Locco2011/clean_gwas \
+#cd clean_gwas \
 #conda env create -f environment.yml \
 #conda activate clean \
 #清洗芬兰R12(下载之后放入当前目录，./finn_clean.sh)，标准列名+补充样本(根据目录下的finnGen_R12.xlsx中num_cases+num_controls=N) \
