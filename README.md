@@ -12,7 +12,8 @@
 #查看数据，请修改format_sumstats.sh \
 #python 3.10 \
 #Linux Ubuntu20.04.6 LTS \
-#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' \
+#标准列名为'CHR', 'BP', 'SNP', 'A1', 'A2', 'P', 'BETA', 'SE', 'FRQ', 'N' 
+##############################################################################################
 #SE = sqrt(((BETA)^2)/qchisq(P,1,lower.tail=F)) \
 #SE = abs(log(OR)/qnorm(P/2)) \
 #Z = -qnorm(P/2) \
