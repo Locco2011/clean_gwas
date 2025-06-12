@@ -1,0 +1,1 @@
+python3 finn_clean.py
