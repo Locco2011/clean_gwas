@@ -178,7 +178,7 @@ sudo chmod +x *.sh
 
 此 `R` 脚本 (`vcf2gwas.sh`) 用于将从 IEU OpenGWAS 等下载的 VCF 格式的摘要统计数据，转换为本项目所定义的标准GWAS格式。
 
-> **说明：** 脚本会从ieu下载的VCF文件(`https://gwas.mrcieu.ac.uk/`)，并整理成标准的表格形式。
+> **说明：** 脚本会从ieu下载的VCF文件(`https://gwas.mrcieu.ac.uk/`)，并整理成标准的表格形式，但是极其消耗和损耗内存。
 
 ```bash
 # 运行sh脚本进行格式转换
@@ -194,5 +194,4 @@ sudo chmod +x *.sh
 # aaa.vcf.gz的总样本为389394；bbb.vcf.gz的总样本为387483；ccc.vcf.gz的总样本为939348
 
 ./vcf2gwas.sh aaa.vcf.gz 389394 bbb.vcf.gz 387483 ccc.vcf.gz 939348
-```
 ```
