@@ -44,7 +44,7 @@ vcf_df <- MungeSumstats:::vcf2df(vcf = vcf,
                                  sampled_rows = TRUE,
                                  verbose = TRUE)
 
-vcf_df\$P <- 10^(-vcf_df\$"LP_${OUTPUT_BASENAME}")
+vcf_df\$P <- 10^(-vcf_df\$"LP")
 
 data <- data.frame(CHR = vcf_df\$chr,
                    SNP = vcf_df\$ID,
@@ -52,9 +52,9 @@ data <- data.frame(CHR = vcf_df\$chr,
                    A1 = vcf_df\$ALT,
                    A2 = vcf_df\$REF,
                    P = vcf_df\$P,
-                   BETA = vcf_df\$"ES_${OUTPUT_BASENAME}",
-                   SE = vcf_df\$"SE_${OUTPUT_BASENAME}",
-                   FRQ = vcf_df\$"AF_${OUTPUT_BASENAME}",
+                   BETA = vcf_df\$"ES",
+                   SE = vcf_df\$"SE",
+                   FRQ = vcf_df\$"AF",
                    N = N_sample)
 
 data.table::fwrite(data,
