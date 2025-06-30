@@ -2,7 +2,7 @@
 ---
 
 ```markdown
-# clean_gwas
+## clean_gwas
 
 
 一套用于清洗、格式化和转换全基因组关联分析（GWAS）摘要统计数据的个人脚本集。
@@ -24,8 +24,8 @@
 
 ## 🖥️ 运行环境
 
-- **操作系统:** Linux Ubuntu 20.04.6 LTS
-- **Python版本:** Python 3.10
+- 操作系统: Linux Ubuntu 20.04.6 LTS
+- Python版本: Python 3.10
 
 ---
 
