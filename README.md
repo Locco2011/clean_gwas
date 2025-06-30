@@ -18,6 +18,7 @@
   - [2. 通用格式化与数据预览](#2-通用格式化与数据预览)
   - [3. 基因组坐标系转换](#3-基因组坐标系转换)
   - [4. IEU VCF格式转为常规GWAS格式](#4-ieu-vcf格式转为常规gwas格式)
+  - [5. 根据坐标补充SNP列](#5-根据坐标补充snp列)
 
 ---
 
@@ -148,25 +149,25 @@ sudo chmod +x *.sh
 
 #### 单文件转换
 
-- **`hg38` 转 `hg37`**
+> - **`hg38` 转 `hg37`**
   ```bash
   ./38to37.sh your_standard_gwas_file.txt
   ```
 
-- **`hg37` 转 `hg38`**
+> - **`hg37` 转 `hg38`**
   ```bash
   ./37to38.sh your_standard_gwas_file.txt
   ```
 
 #### 批量文件转换
 
-- **批量 `hg38` 转 `hg37`**
+> - **批量 `hg38` 转 `hg37`**
   ```bash
   # /path/to/your/folder 是存放所有 .txt 格式标准GWAS文件的文件夹路径
   ./38to37cycle.sh /path/to/your/folder
   ```
   
-- **批量 `hg37` 转 `hg38`**
+> - **批量 `hg37` 转 `hg38`**
   ```bash
   # /path/to/your/folder 是存放所有 .txt 格式标准GWAS文件的文件夹路径
   ./37to38cycle.sh /path/to/your/folder
@@ -195,3 +196,17 @@ sudo chmod +x *.sh
 
 ./vcf2gwas.sh aaa.vcf.gz 389394 bbb.vcf.gz 387483 ccc.vcf.gz 939348
 ```
+
+---
+
+### 5. 根据坐标补充SNP列
+
+此脚本用于处理缺少`SNP`标识符（`rsID`）的GWAS数据。它会根据`CHR`（染色体）和`BP`（物理位置）列，从参考数据库中查找并填充对应的`SNP`列，有待补充。
+
+> 前提：有待补充。
+
+```bash
+# 此脚本会读取输入文件，并生成一个补充了SNP列的新文件
+./add_snp_id.sh input_gwas_no_snp.txt
+```
+
