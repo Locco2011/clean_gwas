@@ -176,17 +176,23 @@ sudo chmod +x *.sh
 
 ### 4. IEU VCF格式转为常规GWAS格式
 
-此 `R` 脚本 (`vcf2gwas.R`) 用于将从 IEU OpenGWAS 等来源下载的 VCF 格式的摘要统计数据，转换为本项目所定义的标准GWAS格式。
+此 `R` 脚本 (`vcf2gwas.sh`) 用于将从 IEU OpenGWAS 等下载的 VCF 格式的摘要统计数据，转换为本项目所定义的标准GWAS格式。
 
-> **说明：** 脚本会从VCF文件的`INFO`和`FORMAT`字段中提取必要的GWAS信息（如BETA, SE, P, AF等），并整理成标准的表格形式。
+> **说明：** 脚本会从ieu下载的VCF文件(`https://gwas.mrcieu.ac.uk/`)，并整理成标准的表格形式。
 
 ```bash
-# 运行R脚本进行格式转换
+# 运行sh脚本进行格式转换
 # 使用前请确保您的Conda环境中已包含R及相关依赖包
 # 示例:
-# --vcf: 输入的VCF文件路径 (可以是 .vcf 或 .vcf.gz)
-# --out: 输出的标准GWAS文件名
+# aaa.vcf.gz: 输入的VCF文件路径
+# 389395: 输出的标准GWAS的总样本
 
-Rscript vcf2gwas.R --vcf ieu-a-2.vcf.gz --out ieu-a-2_gwas.txt
+./vcf2gwas.sh xxx.vcf.gz 389394
+```
+```bash
+# 多个vcf.gz文件处理可这样，以空格分开，后面紧随下一个文件及样本
+# aaa.vcf.gz的总样本为389394；bbb.vcf.gz的总样本为387483；ccc.vcf.gz的总样本为939348
+
+./vcf2gwas.sh aaa.vcf.gz 389394 bbb.vcf.gz 387483 ccc.vcf.gz 939348
 ```
 ```
