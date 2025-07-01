@@ -184,7 +184,7 @@ sudo chmod +x *.sh
 
 ### 4. IEU VCF格式转为常规GWAS格式
 
-此 `R` 脚本 (`vcf2gwas.sh`) 用于将从 IEU OpenGWAS 等下载的 VCF 格式的摘要统计数据，转换为本项目所定义的标准GWAS格式。
+此 `sh` 脚本 (`vcf2gwas.sh`) 用于将从 IEU OpenGWAS 等下载的 `*.vcf.gz` 格式的摘要统计数据，转换为本项目所定义的标准GWAS格式。
 
 > **说明：** 脚本会从ieu下载的VCF文件(`https://gwas.mrcieu.ac.uk/`)，并整理成标准的表格形式，但是极其消耗和损耗内存。
 
