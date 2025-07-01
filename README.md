@@ -51,7 +51,14 @@ cd clean_gwas
 conda env create -f environment.yml
 conda activate clean
 ```
-
+---
+```bash
+# 4. 进入R根据R_installed_packages.csv安装R包及相关版本
+install.packages("remotes")
+for (i in 1:nrow(pkgs)) {
+  remotes::install_version(pkgs$Package[i], version = pkgs$Version[i])
+}
+```
 ---
 
 ## 🔄 更新仓库
