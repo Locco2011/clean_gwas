@@ -19,6 +19,7 @@
   - [3. 基因组坐标系转换](#3-基因组坐标系转换)
   - [4. IEU VCF格式转为常规GWAS格式](#4-ieu-vcf格式转为常规gwas格式)
   - [5. 根据坐标补充SNP列](#5-根据坐标补充snp列)
+  - [6. 形成ldsc格式](#6-形成ldsc格式)
 
 ---
 
@@ -216,4 +217,20 @@ sudo chmod +x *.sh
 # 此脚本会读取输入文件，并生成一个补充了SNP列的新文件
 ./add_snp_id.sh input_gwas_no_snp.txt
 ```
+---
 
+### 6. 形成ldsc格式
+
+此脚本用于形成ldsc格式文件`.sumstats.gz`，先配置`https://github.com/belowlab/ldsc/tree/2-to-3`。
+
+> 前提：在ldsc格式下创建data文件，放入清洗好的数据。
+
+> 更改：`MUNGE_PY="/home/cgl/ldsc/munge_sumstats.py"`
+
+> 更改：`SNP_LIST="/home/cgl/ldsc/eur_w_ld_chr/w_hm3.snplist"`
+
+```bash
+# 激活ldsc环境
+conda activate ldsc
+./format_ldsc.sh
+```
