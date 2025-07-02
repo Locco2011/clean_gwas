@@ -231,6 +231,7 @@ sudo chmod +x *.sh
 
 ```bash
 # 激活ldsc环境
+# sudo chmod +x format_ldsc.sh
 conda activate ldsc
 ./format_ldsc.sh
 ```
