@@ -230,8 +230,13 @@ sudo chmod +x *.sh
 > 更改：`SNP_LIST="/home/cgl/ldsc/eur_w_ld_chr/w_hm3.snplist"`
 
 ```bash
-# 激活ldsc环境
+# 下载github上的ldsc.zip
+# unzip ldsc.zip
+# conda env create --file environment.yml
+# source activate ldsc
 # sudo chmod +x format_ldsc.sh
+# 检测是否安装成功./ldsc.py -h
+# 检测是否安装成功./munge_sumstats.py -h
 conda activate ldsc
 ./format_ldsc.sh
 ```
