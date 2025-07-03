@@ -225,6 +225,11 @@ sudo cpanm Bio::DB::EUtilities
 git clone https://github.com/Ensembl/ensembl-vep
 cd ensembl-vep
 git pull
+git clone https://github.com/Ensembl/ensembl.git
+git clone https://github.com/Ensembl/ensembl-variation.git
+git clone https://github.com/Ensembl/ensembl-funcgen.git
+git clone https://github.com/Ensembl/ensembl-compara.git
+git clone https://github.com/Ensembl/ensembl-io.git
 perl INSTALL.pl
 
 # 测试是否成功
