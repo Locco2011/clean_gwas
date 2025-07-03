@@ -224,6 +224,8 @@ git clone https://github.com/Ensembl/ensembl-vep
 cd ensembl-vep
 git pull
 perl INSTALL.pl
+echo 'export PERL5LIB=$HOME/ensembl-vep/modules:$HOME/ensembl-vep/ensembl/modules:$HOME/ensembl-vep/ensembl-variation/modules:$HOME/ensembl-vep/ensembl-funcgen/modules:$HOME/ensembl-vep/ensembl-compara/modules:$HOME/ensembl-vep/ensembl-io/modules' >> ~/.bashrc
+source ~/.bashrc
 # 测试是否成功
 ./vep -i examples/homo_sapiens_GRCh38.vcf --cache
 ```
