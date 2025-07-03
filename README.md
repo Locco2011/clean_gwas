@@ -223,20 +223,21 @@ sudo chmod +x *.sh
 
 此脚本用于形成ldsc格式文件`.sumstats.gz`，先配置`https://github.com/belowlab/ldsc/tree/2-to-3`。
 
-> 前提：在ldsc格式下创建data文件，放入清洗好的数据。
+> 前提：在ldsc文件夹下先创建data文件，放入清洗好的数据。
 
 > 更改：`MUNGE_PY="/home/cgl/ldsc/munge_sumstats.py"`
 
 > 更改：`SNP_LIST="/home/cgl/ldsc/eur_w_ld_chr/w_hm3.snplist"`
 
 ```bash
-# 下载github上的ldsc.zip
+# 下载我的github上的ldsc.zip（已经在environment.yml里面配置了清华镜像，极速安装）
 # unzip ldsc.zip
 # conda env create --file environment.yml
 # source activate ldsc
 # sudo chmod +x format_ldsc.sh
 # 检测是否安装成功./ldsc.py -h
 # 检测是否安装成功./munge_sumstats.py -h
+# mkdir data
 conda activate ldsc
 ./format_ldsc.sh
 ```
