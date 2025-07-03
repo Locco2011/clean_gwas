@@ -19,7 +19,7 @@
   - [3. 基因组坐标系转换](#3-基因组坐标系转换)
   - [4. IEU VCF格式转为常规GWAS格式](#4-ieu-vcf格式转为常规gwas格式)
   - [5. 根据坐标补充SNP列](#5-根据坐标补充snp列)
-  - [6. 形成ldsc格式](#6-形成ldsc格式)
+  - [6. ldsc格式文件](#6-ldsc格式文件)
 
 ---
 
@@ -219,9 +219,9 @@ sudo chmod +x *.sh
 ```
 ---
 
-### 6. 形成ldsc格式
+### 6. ldsc格式文件
 
-此脚本用于形成ldsc格式文件`.sumstats.gz`，先配置`https://github.com/belowlab/ldsc/tree/2-to-3`。
+此脚本用于形成ldsc格式文件`.sumstats.gz`，代码来源`https://github.com/belowlab/ldsc/tree/2-to-3`。
 
 > 前提：在ldsc文件夹下先创建data文件，放入清洗好的数据。
 
