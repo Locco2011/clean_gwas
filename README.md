@@ -218,6 +218,7 @@ sudo chmod +x *.sh
 sudo apt-get update
 sudo apt-get install libdbi-perl
 sudo apt-get install libdbd-mysql-perl
+sudo apt-get install libmodule-build-perl
 sudo cpan DBI
 git clone https://github.com/Ensembl/ensembl-vep
 cd ensembl-vep
