@@ -209,7 +209,19 @@ sudo chmod +x *.sh
 
 ### 5. 根据坐标补充SNP列
 
-`VEP`软件用于处理缺少`SNP`标识符（`rsID`）的GWAS数据。它会根据`CHR`（染色体）和`BP`（物理位置）列，从参考数据库中查找并填充对应的`SNP`列。
+### `ANNOVAR`软件
+
+根据`CHR`（染色体）和`BP`（物理位置）列补充`SNP`列。
+
+根据`SNP`进行补充`CHR`（染色体）和`BP`（物理位置）列。
+
+`ANNOVAR`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
+
+`下载`
+
+`hg19_avsnp150.txt.gz`对应`GRCh37（hg19）`
+
+`hg38_avsnp150.txt.gz`对应`GRCh38（hg38）`
 
 > 前提：安装很复杂。
 
