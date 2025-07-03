@@ -18,7 +18,7 @@
   - [2. 通用格式化与数据预览](#2-通用格式化与数据预览)
   - [3. 基因组坐标系转换](#3-基因组坐标系转换)
   - [4. IEU VCF格式转为常规GWAS格式](#4-ieu-vcf格式转为常规gwas格式)
-  - [5. 根据坐标补充SNP列](#5-根据坐标补充snp列)
+  - [5. 补充CHR和BP和SNP列](#5-补充chr和bp和snp列)
   - [6. ldsc格式文件](#6-ldsc格式文件)
 
 ---
@@ -207,7 +207,7 @@ sudo chmod +x *.sh
 
 ---
 
-### 5. 根据坐标补充SNP列
+### 5. 补充chr和bp和snp列
 
 ### `ANNOVAR`软件
 
@@ -223,35 +223,14 @@ sudo chmod +x *.sh
 
 `hg38_avsnp150.txt.gz`对应`GRCh38（hg38）`
 
-> 前提：安装很复杂。
+`https://pan.baidu.com/s/1UNwRLTDuRydelENruHb49w?pwd=ge1e`
+
+> 前提：极其消耗内存。
 
 ```bash
-# 安装VEP，需要使用到perl板块
-sudo apt-get update
-sudo apt-get install libdbi-perl
-sudo apt-get install libdbd-mysql-perl
-sudo apt-get install libmodule-build-perl
-sudo cpan DBI
-sudo apt-get install cpanminus
-sudo cpanm Bio::DB::EUtilities
-git clone https://github.com/Ensembl/ensembl-vep
-cd ensembl-vep
-git pull
-git clone https://github.com/Ensembl/ensembl.git
-git clone https://github.com/Ensembl/ensembl-variation.git
-git clone https://github.com/Ensembl/ensembl-funcgen.git
-git clone https://github.com/Ensembl/ensembl-compara.git
-git clone https://github.com/Ensembl/ensembl-io.git
-perl INSTALL.pl
-
-# 测试是否成功
-./vep -i examples/homo_sapiens_GRCh38.vcf --cache
+待更新
 ```
 
-```bash
-# 此脚本会读取输入文件，并生成一个补充了SNP列的新文件
-./add_snp_id.sh input_gwas_no_snp.txt
-```
 ---
 
 ### 6. ldsc格式文件
