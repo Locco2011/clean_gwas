@@ -209,9 +209,23 @@ sudo chmod +x *.sh
 
 ### 5. 根据坐标补充SNP列
 
-此脚本用于处理缺少`SNP`标识符（`rsID`）的GWAS数据。它会根据`CHR`（染色体）和`BP`（物理位置）列，从参考数据库中查找并填充对应的`SNP`列，有待补充。
+`VEP`软件用于处理缺少`SNP`标识符（`rsID`）的GWAS数据。它会根据`CHR`（染色体）和`BP`（物理位置）列，从参考数据库中查找并填充对应的`SNP`列。
 
-> 前提：有待补充。
+> 前提：安装很复杂。
+
+```bash
+# 安装VEP，需要使用到perl板块
+sudo apt-get update
+sudo apt-get install libdbi-perl
+sudo apt-get install libdbd-mysql-perl
+sudo cpan DBI
+git clone https://github.com/Ensembl/ensembl-vep
+cd ensembl-vep
+git pull
+perl INSTALL.pl
+# 测试是否成功
+./vep -i examples/homo_sapiens_GRCh38.vcf --cache
+```
 
 ```bash
 # 此脚本会读取输入文件，并生成一个补充了SNP列的新文件
