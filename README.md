@@ -225,6 +225,8 @@ sudo chmod +x *.sh
 
 > 前提：在ldsc文件夹下先创建data文件，放入清洗好的数据。
 
+> 视频：`https://pan.baidu.com/s/1f_RTylFqMRYLVpjJN8eYzg?pwd=mdu3`
+
 > 更改：`MUNGE_PY="/home/cgl/ldsc/munge_sumstats.py"`
 
 > 更改：`SNP_LIST="/home/cgl/ldsc/eur_w_ld_chr/w_hm3.snplist"`
