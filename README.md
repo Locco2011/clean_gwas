@@ -56,6 +56,7 @@ conda activate clean
 ```bash
 # 4. 进入R根据R_installed_packages.csv安装R包及相关版本
 install.packages("remotes")
+pkgs<- data.table::fread("./R_installed_packages.csv",header = T)
 for (i in 1:nrow(pkgs)) {
   remotes::install_version(pkgs$Package[i], version = pkgs$Version[i])
 }
