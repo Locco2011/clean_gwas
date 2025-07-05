@@ -1,8 +1,6 @@
 #!/bin/bash
 
-
-
-echo "--- 开始批量LDSC rg遗传相关性分析 ---"
+echo "--- 开始批量LDSC rg遗传相关性分析  ---"
 
 # --- 第一部分：定义固定路径和参数 ---
 # !!! 请根据您的实际情况修改下面三个路径 !!!
@@ -26,12 +24,12 @@ MAX_JOBS=$((TOTAL_CORES / 2))
 echo "系统总核心数: $TOTAL_CORES, 将使用 $MAX_JOBS 个核心并行运行。"
 
 # 定义日志文件用于断点续传
-LOG_FILE="$MAIN_OUTPUT_DIR/parallel_rg_jobs.log"
+LOG_FILE="$MAIN_OUTPUT_DIR/parallel_rg_all_pairs_jobs.log"
 echo "任务日志将记录在: $LOG_FILE"
 
 # --- 第二部分：定义核心分析函数 ---
 # 此函数接收两个文件作为输入，并执行rg分析
-run_ldsc_rg() {
+run_ldsc_rg_ordered() {
     local file1="$1"
     local file2="$2"
 
@@ -41,13 +39,9 @@ run_ldsc_rg() {
     base1=$(basename "$file1" .sumstats.gz)
     base2=$(basename "$file2" .sumstats.gz)
 
-    # 按照字母顺序创建目录名和文件前缀，以避免重复 (e.g., A_B and B_A)
-    local out_name
-    if [[ "$base1" < "$base2" ]]; then
-        out_name="${base1}_${base2}"
-    else
-        out_name="${base2}_${base1}"
-    fi
+    # *** CHANGED LOGIC ***
+    # 直接按接收到的顺序组合文件名，不再进行字母排序
+    local out_name="${base1}_${base2}"
 
     # 创建独立的输出子目录
     local output_subdir="${MAIN_OUTPUT_DIR}/${out_name}"
@@ -65,13 +59,13 @@ run_ldsc_rg() {
 }
 
 # 将函数和变量导出，以便 parallel 子进程可以访问
-export -f run_ldsc_rg
+export -f run_ldsc_rg_ordered
 export LDSC_PY_PATH REF_LD_PATH MAIN_OUTPUT_DIR
 
 # --- 第三部分：生成任务对并使用 GNU Parallel 执行 ---
 
 # 将所有输入文件读入一个数组
-shopt -s nullglob # 如果没有匹配的文件，数组为空
+shopt -s nullglob
 files=("$INPUT_DIR"/*.sumstats.gz)
 shopt -u nullglob
 
@@ -80,17 +74,20 @@ if [ "$num_files" -lt 1 ]; then
     echo "在 $INPUT_DIR 中没有找到 .sumstats.gz 文件！"
     exit 1
 fi
-echo "找到了 $num_files 个文件，将生成 $((num_files * (num_files + 1) / 2)) 个分析任务。"
+# *** CHANGED LOGIC ***
+# 计算 N * N 个任务
+echo "找到了 $num_files 个文件，将生成 $((num_files * num_files)) 个分析任务。"
 
-# 使用两个循环生成所有唯一的组合（包括文件与自身），并将它们通过管道传递给 parallel
+# *** CHANGED LOGIC ***
+# 两个循环都从0开始，以生成所有 N*N 的组合
 {
     for (( i=0; i<num_files; i++ )); do
-        for (( j=i; j<num_files; j++ )); do
+        for (( j=0; j<num_files; j++ )); do
             # 输出两个文件名，用制表符分隔
             printf "%s\t%s\n" "${files[i]}" "${files[j]}"
         done
     done
-} | parallel --colsep '\t' --jobs $MAX_JOBS --bar --resume --joblog "$LOG_FILE" run_ldsc_rg {1} {2}
+} | parallel --colsep '\t' --jobs $MAX_JOBS --bar --resume --joblog "$LOG_FILE" run_ldsc_rg_ordered {1} {2}
 
 
 echo "--- 所有 rg 分析任务处理完成 ---"
