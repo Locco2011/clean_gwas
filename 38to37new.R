@@ -141,7 +141,7 @@ cat("  - 空值清理完成! 最终剩余", nrow(cleaned_dt), "行。\n")
 # 8. 写出转换后的文件
 # ------------------------------------------------------------------------------
 cat("步骤 6: 写入最终文件...\n")
-fwrite(cleaned_dt, file = output_file, sep = "\t", col.names = TRUE, na = "NA")
+fwrite(cleaned_dt, file = output_file, sep = "\t", col.names = TRUE, na = "NA", quote = FALSE)
 
 cat("------------------------------------\n")
 cat("操作全部完成!\n")
