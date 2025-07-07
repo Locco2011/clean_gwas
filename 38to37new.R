@@ -1,15 +1,15 @@
 # ==============================================================================
-# 脚本: GWAS数据处理、坐标转换及清理流程
+# 脚本: GWAS数据处理、坐标转换及清理流程 (v2 - 自动命名输出)
 # 功能:
 # 1. 读取GWAS汇总统计数据。
 # 2. 自动将常见的列名标准化 (例如 chr -> CHR, pval -> P)。
 # 3. 将基因组坐标从 hg38 (GRCh38) 转换为 hg19 (GRCh37)。
 # 4. 移除MHC区域 (chr6:28,477,797-33,448,354 on hg19) 的数据。
 # 5. 清理关键列中包含空值(NA)的行。
-# 6. 将处理完成的数据写入新的文本文件。
+# 6. 将处理完成的数据写入自动生成的新文件名中 (例如 input.tsv -> input_hg19.txt)。
 #
 # 如何运行:
-# Rscript process_gwas.R <input_file.tsv> <output_file.txt>
+# Rscript process_gwas_auto_name.R <input_file.tsv>
 # ==============================================================================
 
 # 1. 加载必要的库
@@ -26,27 +26,36 @@ if (!requireNamespace("data.table", quietly = TRUE)) {
   message("data.table not found, installing...")
   install.packages("data.table")
 }
+if (!requireNamespace("tools", quietly = TRUE)) {
+  # 'tools' 包用于处理文件名，通常是R自带的，但以防万一
+  install.packages("tools")
+}
 
 library(MungeSumstats)
 library(data.table)
+library(tools)
 
-# 2. 从命令行获取参数
+# 2. 从命令行获取参数并生成输出文件名
 # ------------------------------------------------------------------------------
 args <- commandArgs(trailingOnly = TRUE)
 
-# 检查参数数量是否正确
-if (length(args) != 2) {
-  stop("用法错误! 请提供两个参数: Rscript process_gwas.R <input_file> <output_file>", call. = FALSE)
+# 检查参数数量是否正确 (现在只需要一个参数)
+if (length(args) != 1) {
+  stop("用法错误! 请只提供一个输入文件参数: Rscript process_gwas_auto_name.R <input_file>", call. = FALSE)
 }
 
-# 分配输入和输出文件名
+# 分配输入文件名
 input_file <- args[1]
-output_file <- args[2]
+
+# 自动生成输出文件名 (例如: /path/to/data.tsv -> data_hg19.txt)
+base_name <- file_path_sans_ext(basename(input_file))
+output_file <- paste0(base_name, "_hg19.txt")
+
 
 cat("------------------------------------\n")
 cat("初始化流程...\n")
 cat("  - 输入文件:", input_file, "\n")
-cat("  - 输出文件:", output_file, "\n")
+cat("  - 自动生成输出文件:", output_file, "\n")
 cat("------------------------------------\n")
 
 # 3. 读取并预处理GWAS汇总数据
@@ -95,8 +104,6 @@ cat("  - 列名标准化完成。\n")
 # ------------------------------------------------------------------------------
 cat("步骤 3: 开始坐标转换 (hg38 -> hg19/hg37)...\n")
 # 假设输入文件是 hg38，目标是 hg19 (等同于 hg37)
-# 注意：如果您的原始数据不是hg38，请修改 ref_genome 参数
-# MungeSumstats 会自动处理染色体前缀 'chr'
 sumstats_dt_hg37 <- MungeSumstats::liftover(
   sumstats_dt = sumstats_dt,
   ref_genome = "hg38",
