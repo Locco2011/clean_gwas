@@ -138,12 +138,26 @@ cleaned_dt <- na.omit(mhc_filtered_dt, cols = cols_to_check)
 cat("  - 空值清理完成! 最终剩余", nrow(cleaned_dt), "行。\n")
 
 
-# 8. 写出转换后的文件
+# 8. 删除多余的元数据列
 # ------------------------------------------------------------------------------
-cat("步骤 6: 写入最终文件...\n")
+# 这是新增的步骤
+cat("步骤 6: 移除多余的元数据列...\n")
+col_to_remove <- "IMPUTATION_gen_build"
+# 检查该列是否存在，如果存在则删除
+if (col_to_remove %in% names(cleaned_dt)) {
+  cleaned_dt[, (col_to_remove) := NULL]
+  cat("  - '", col_to_remove, "' 列已成功删除。\n", sep="")
+} else {
+  cat("  - 未找到 '", col_to_remove, "' 列，跳过删除。\n", sep="")
+}
+
+# 9. 写出转换后的文件
+# ------------------------------------------------------------------------------
+cat("步骤 7: 写入最终文件 (不带引号)...\n")
 fwrite(cleaned_dt, file = output_file, sep = "\t", col.names = TRUE, na = "NA", quote = FALSE)
 
 cat("------------------------------------\n")
 cat("操作全部完成!\n")
 cat("最终处理后的文件已保存至:", output_file, "\n")
+cat("------------------------------------\n"))
 cat("------------------------------------\n")
