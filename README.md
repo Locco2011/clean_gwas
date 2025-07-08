@@ -229,7 +229,29 @@ sudo chmod +x *.sh
 > 前提：极其消耗内存。
 
 ```bash
-待更新
+# 构造数据，V123456分别对应CHR，start，end，A2，A1，SNP（非常消耗内存，大概需要58-62G左右内存）
+library(data.table)
+# aa <- fread("./hg38_avsnp150.txt.gz", header = FALSE)
+aa <- fread("./hg19_avsnp150.txt.gz", header = FALSE)
+setnames(aa, c("V1", "V2", "V3", "V4", "V5", "V6"), 
+         c("CHR", "pos_start", "pos_end", "A2", "A1", "SNP"))
+aa <- aa[!(A1 == "-" | A2 == "-")]
+aa[, BP := ifelse(pos_start == pos_end, 
+                        pos_start, 
+                        round((pos_start + pos_end)/2))]
+aa <- aa[, .(SNP, CHR, BP, A1, A2)]
+head(aa)
+dir.create("chr_files", showWarnings = FALSE)
+all_chr <- unique(aa$CHR)
+for (chr in all_chr) {
+  chr_data <- aa[CHR == chr]
+  file_name <- paste0("chr_files/CHR", chr, ".txt")
+  fwrite(chr_data, file_name, sep = "\t")
+}
+# 循环根据构造的数据通过SNP、A1、A2去插补CHR和BP
+
+# 循环根据构造的数据通过A1、A2、CHR和BP去插补SNP
+
 ```
 
 ---
