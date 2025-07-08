@@ -227,11 +227,20 @@ sudo chmod +x *.sh
 `https://pan.baidu.com/s/1UNwRLTDuRydelENruHb49w?pwd=ge1e`
 
 > 前提：极其消耗内存。
+---
+
+### 根据`hg19_avsnp150.txt.gz`和`hg38_avsnp150.txt.gz`构造插补数据
+
+`hg19_avsnp150预处理`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
+
+`hg38_avsnp150预处理`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
 
 ```bash
 # 构造数据，V123456分别对应CHR，start，end，A2，A1，SNP（非常消耗内存，大概需要58-62G左右内存）
 library(data.table)
+
 # aa <- fread("./hg38_avsnp150.txt.gz", header = FALSE)
+
 aa <- fread("./hg19_avsnp150.txt.gz", header = FALSE)
 setnames(aa, c("V1", "V2", "V3", "V4", "V5", "V6"), 
          c("CHR", "pos_start", "pos_end", "A2", "A1", "SNP"))
@@ -248,12 +257,81 @@ for (chr in all_chr) {
   file_name <- paste0("chr_files/CHR", chr, ".txt")
   fwrite(chr_data, file_name, sep = "\t")
 }
-# 循环根据构造的数据通过SNP、A1、A2去插补CHR和BP
+```
+
+---
+
+### 循环根据构造的数据通过`SNP`、`A1`、`A2`去插补`CHR`和`BP`
+
+```bash
+  
+### 循环根据构造的数据通过SNP、A1、A2去插补CHR和BP
+
+library(data.table)
+
+gwas <- fread("./gwas_NoBPCHR.txt")      # 插补的Gwas
+
+ref_dir <- "./hg19/"                     # 参考文件存放
+
+if (!all(c("SNP", "A1", "A2") %in% names(gwas))) {
+  stop("GWAS数据缺少 SNP、A1、A2 列！")
+}
+
+
+chr_ids <- c(as.character(1:22), "X", "Y", "MT")
+
+ref_all <- data.table()
+
+for (chr in chr_ids) {
+  
+  ref_file <- file.path(ref_dir, paste0("CHR", chr, ".txt"))
+  
+  if (!file.exists(ref_file)) {
+    message("参考文件不存在，跳过：", ref_file)
+    next
+  }
+  
+  message("读取参考文件：", ref_file)
+  
+  ref_chr <- fread(ref_file)
+  
+  setnames(ref_chr, c("SNP", "CHR", "BP", "A1", "A2"))
+  
+  ref_all <- rbind(ref_all, ref_chr, fill = TRUE)
+}
+
+ref_all <- unique(ref_all)
+
+
+setkey(ref_all, SNP, A1, A2)
+setkey(gwas, SNP, A1, A2)
+
+gwas_joined <- ref_all[gwas]
+
+cols_order <- c("SNP", "CHR", "BP", setdiff(names(gwas_joined), c("SNP", "CHR", "BP")))
+gwas_joined <- gwas_joined[, ..cols_order]
+
+
+fwrite(gwas_joined, "my_gwas_with_CHR_BP.txt", sep = "\t", , quote = FALSE)
+
+message("✅ GWAS插补 CHR、BP 完成！")
+
+
+```
+---
+
+### 循环根据构造的数据通过`A1`、`A2`、`CHR`和`BP`去插补`SNP`
+
+```bash
 
 # 循环根据构造的数据通过A1、A2、CHR和BP去插补SNP
+
 library(data.table)
+
 gwas <- fread("./gwas_NoSNP.txt")     # GWAS目录
+
 ref_dir <- "./hg19/"                  # 参考文件目录
+
 print(names(gwas))
 if (!all(c("CHR", "BP", "A1", "A2") %in% names(gwas))) {
   stop("GWAS数据缺少CHR、BP、A1、A2列！")
