@@ -251,7 +251,39 @@ for (chr in all_chr) {
 # 循环根据构造的数据通过SNP、A1、A2去插补CHR和BP
 
 # 循环根据构造的数据通过A1、A2、CHR和BP去插补SNP
-
+library(data.table)
+gwas <- fread("./gwas_NoSNP.txt")     # GWAS目录
+ref_dir <- "./hg19/"                  # 参考文件目录
+print(names(gwas))
+if (!all(c("CHR", "BP", "A1", "A2") %in% names(gwas))) {
+  stop("GWAS数据缺少CHR、BP、A1、A2列！")
+}
+chr_ids <- unique(gwas$CHR)
+gwas_list <- list()
+for (chr in chr_ids) {
+  message("正在处理CHR: ", chr)
+  ref_file <- file.path(ref_dir, paste0("CHR", chr, ".txt"))
+  if (!file.exists(ref_file)) {
+    message("参考文件不存在，跳过CHR", chr, ": ", ref_file)
+    next
+  }
+  ref <- fread(ref_file)
+  setnames(ref, c("SNP", "CHR", "BP", "A1", "A2"))
+  gwas_chr <- gwas[CHR == chr]
+  if (nrow(gwas_chr) == 0) {
+    message("GWAS中CHR", chr, "没有数据，跳过。")
+    next
+  }
+  setkey(ref, CHR, BP, A1, A2)
+  setkey(gwas_chr, CHR, BP, A1, A2)
+  gwas_chr_joined <- ref[gwas_chr]
+  cols_order <- c("SNP", setdiff(names(gwas_chr_joined), "SNP"))
+  gwas_chr_joined <- gwas_chr_joined[, ..cols_order]
+  gwas_list[[chr]] <- gwas_chr_joined
+}
+gwas_full <- rbindlist(gwas_list, use.names = TRUE, fill = TRUE)
+fwrite(gwas_full, "Gwas_with_SNP.txt", sep = "\t", quote = FALSE)
+message("✅ GWAS插补完成！")
 ```
 
 ---
