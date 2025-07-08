@@ -210,21 +210,13 @@ sudo chmod +x *.sh
 
 ### 5. 补充chr和bp和snp列
 
-### `ANNOVAR`软件
-
-根据`CHR`（染色体）和`BP`（物理位置）列补充`SNP`列。
-
-根据`SNP`进行补充`CHR`（染色体）和`BP`（物理位置）列。
-
-`ANNOVAR`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
-
-`下载`
+`下载参考文件地址`：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
 
 `hg19_avsnp150.txt.gz`对应`GRCh37（hg19）`
 
 `hg38_avsnp150.txt.gz`对应`GRCh38（hg38）`
 
-`https://pan.baidu.com/s/1UNwRLTDuRydelENruHb49w?pwd=ge1e`
+已下载并存放百度网盘，需要自取：`https://pan.baidu.com/s/1UNwRLTDuRydelENruHb49w?pwd=ge1e`
 
 > 前提：极其消耗内存。
 ---
