@@ -223,9 +223,9 @@ sudo chmod +x *.sh
 
 ### 根据`hg19_avsnp150.txt.gz`和`hg38_avsnp150.txt.gz`构造插补数据
 
-`hg19_avsnp150预处理`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
+`hg19_avsnp150预处理`地址：`https://pan.baidu.com/s/1CjZjjDErJ0Sh48dXGLKC4w?pwd=ufky`
 
-`hg38_avsnp150预处理`地址：`https://annovar.openbioinformatics.org/en/latest/user-guide/download/`
+`hg38_avsnp150预处理`地址：`https://pan.baidu.com/s/1dObKDMiWZJFhrwfhqpCjaw?pwd=ct73`
 
 ```bash
 # 构造数据，V123456分别对应CHR，start，end，A2，A1，SNP（非常消耗内存，大概需要58-62G左右内存）
